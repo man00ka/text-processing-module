@@ -127,6 +127,17 @@ It was thought to help the speech to text pipeline reduce spoken input to meanin
 > to provide your own wordlists and the code would need further improvement to support the dependencies' multilingualism.
 
 ---
+## GPU acceleration
+when instantiating the filter, it is possible to pass `device='cuda'` or `device='mps'` (Metal Performance Shader; macOS) as additional keyword argument
+which will be passed down to the detoxify dependency.
+
+While the first apply call to the filter takes two to three seconds longer due to the model being moved to the gpu, all following calls will be
+accelerated quite a bit.
+
+For the example shown in section [Toxicity Filter](#toxicity-filter) it increases speed to roughly 290%.
+![toxicity-filter-example](toxicity_filter_eample.png)
+
+---
 ## Attributions
 - **Tokenization** of texts prior applying the word list filter is done using **SoMaJo** (see: https://github.com/tsproisl/SoMaJo)
 - The **word list** for span detection was taken from [erikdyan/toxic_span_detection](https://github.com/erikdyan/toxic_span_detection/blob/981c7f2d7fba6625a7cb57678d80ef0341b3288b/data/wordlist.txt)
