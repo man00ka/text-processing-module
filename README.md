@@ -78,39 +78,57 @@ See the `DEMO_ToxicityFilter.ipynb`, `DEMO_ToxicSpanDetection.ipynb` and `DEMO_K
 ### Toxicity Filter
 `TextProcessingModule.toxicity_filter` provides the ToxicityFilter class. ToxicityFilter uses a two-tiered filter approach:
 
-1. Strictly **filtering** prompts **by basic lists** of vulgar or swear words, immediately neglecting the input text.
-2. **Detecting** more subtle forms of problematic textual information like **threats, obscenity, insults, and identity-based hate** using [detoxify](https://github.com/unitaryai/detoxify) if the first filter stage was passed. A **threshold** (range [0; 1]) can be used to sharpen the filter.
+1. Strictly **filtering** prompts **by basic lists** of vulgar or swear words, immediately neglecting the input text upon match.
+2. **Detecting** more subtle forms of problematic textual information like **threats, obscenity, insults, and identity-based hate** using [detoxify](https://github.com/unitaryai/detoxify) if the first filter stage was passed. A **threshold** (range [0; 1]; defautl: 0.5) can be used to sharpen the filter.
+
+ToxicityFilter will first run the text against a default (or custom) wordlist and return 1 if there is a match, bypassing the second filter.
+Only if there is no match, the text is passed through the second filter (detoxify).
+
+Detoxify rates a prompt in five different categories and assigns an overall toxicity value. ToxicityFilter takes this value and compares it to the threshold. If the **threshold is exceeded**, a `1` is returned otherwise `None`.
 
 
-Detoxify rates a prompt in five different categories and assigns an overall toxicity value. ToxicityFilter takes the toxicity value and compares it to the threshold. If the **threshold is exceeded**, a `1` is returned otherwise `None`.
+Some input may trigger the first stage:
 
-[SCREENSHOT]
+<img width="802" alt="image" src="https://github.com/man00ka/text-processing-module/assets/78318220/07ceaec3-17b3-4d07-808f-40b93416579d">
+
+> Note that the verbose output contains the problematic tokan that was matched against the wordlist or `None` if there was no match.
+
+
+And some input may trigger the second filter:
+
+<img width="802" alt="image" src="https://github.com/man00ka/text-processing-module/assets/78318220/25d3b308-4b63-451c-989f-a9d952b78ae1">
+
+> Note that we had to dial down the threshold to make the filter trigger without using foul language of some sort.
 
 
 ToxicityFilter also stores **verbose results** of the last apply call. Use `toxicity_filter.get_results()` to get them. You can pass `as_dataframe=True` to get a more beautified output:
 
-[SCREENSHOT]
+<img width="802" alt="image" src="https://github.com/man00ka/text-processing-module/assets/78318220/b34bcf2e-5c0f-4012-bbcc-df918dd348e5">
+
+> - Note that in the first column the toxic token is `None` because only the second filter stage triggered.
+> - Also note that the data frame view of the results still needs improvement since the toxic categories ('severe_toxicity', etc.)
+> are cut off. Better leave `as_dataframe` at **default value (False)**, which will then give you the **results as dictionary**.
 
 
-By default, verbose results are only stored for the last apply call. Results for consecutive uses of the filter can be stored by passing `keep_results=True` to its `apply` method or by using `toxicityfilter.set_keep_results(True)` as a setter.
+If you only are interested in the second filters results, you can get them like so:
+<img width="802" alt="image" src="https://github.com/man00ka/text-processing-module/assets/78318220/9e05ff10-83ab-4943-ae54-3197cbab5e10">
 
-[SCREENSHOT]
+By default, these verbose results are only stored for the **last apply call**. Results for consecutive uses of the filter can be stored by passing
+`keep_results=True` to its constructor or by using `toxicityfilter.set_keep_results(True)` as a setter:
 
-The Results can be accesed via `toxicityfilter.get_results(as_dataframe=True)` (default: `as_dataframe=False` which reuturns a dictionary)
-
-![toxicity-filter-example](screen_shots/toxicity_filter_example.png)
+<img width="944" alt="image" src="https://github.com/man00ka/text-processing-module/assets/78318220/ed900bf9-ba35-4f68-9baa-a932aee69069">
 
 > [!NOTE]
-> Please also check out the **comparison of the filter stages** as shown in the [DEMO_ToxicityFilter.ipynb](DEMO_ToxicityFilter.ipynb) notebook
-> to get an inpression about behaviour and limitations.
->
+> Please also check out the **comparison of the filter stages** as conducted in the [DEMO_ToxicityFilter.ipynb](DEMO_ToxicityFilter.ipynb) notebook
+> to get an inpression about **behaviour and limitations**.
+
 > #### Additional Notes
 > - The texts are tokenized but not lemmatized prior applying the word list filter. This will be a future improvemen
 > - You can provide your custom wordlist for the first filter stage.
 > - The two filter stages can also be used **separately** (see [DEMO_ToxicityFilter.ipynb](DEMO_ToxicityFilter.ipynb))
 > - ToxicityFilter can be initialized with **three different models**: 'original' (default), 'unbiased', 'multilingual'. The model names are passed down to [detoxify](https://github.com/unitaryai/detoxify); see their documentation for **model explanation**. 
 
-
+---
 ### Span Detection
 The `toxicity_filter` submodule also provides a class `SpanDetector`.
 It can return the **character span of toxic parts** of a text. 
@@ -135,9 +153,9 @@ It was thought to help the speech to text pipeline reduce spoken input to meanin
 ## Multilingualism
 > [!NOTE]
 > The speech to image pipeline this module was designed for, would translate speech into english text as an image
-> generation prompt. Thus, the module was **tailored to English**.
-> Although technically some of the dependencies in use provide **multilingualism** to some extent, you would need
-> to provide your own wordlists and the code would need further improvement to support the dependencies' multilingualism.
+> generation prompt. Thus, `TextProcessingModule` was **tailored to English**.
+> Although technically some of the dependencies in use provide **multilingualism** to some extent, you would still need
+> to provide your own wordlists for the desired language and the code may need further improvement to fully support multilingualsim.
 
 ---
 ## GPU acceleration
@@ -147,7 +165,7 @@ which will be passed down to the detoxify dependency.
 While the first apply call to the filter takes two to three seconds longer due to the model being moved to the gpu, all following calls will be
 accelerated quite a bit.
 
-For the example shown in section [Toxicity Filter](#toxicity-filter) it increases speed to roughly 290%.
+For the list of example texts given in section [Toxicity Filter](#toxicity-filter), it **increases speed to roughly 290%** (on an **Apple M1 Pro with 14-Core GPU**).
 
 ![gpu-acceleration-comparison](screen_shots/gpu-acceleration-comparison.png)
 
