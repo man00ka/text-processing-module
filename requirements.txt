@@ -1,0 +1,9 @@
+# Necessary pip packages. The version Numbers are not
+# strictly necessary but are those used during development
+
+detoxify
+mudes
+git+https://github.com/LIAAD/yake
+somajo
+someweta
+pandas

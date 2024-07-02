@@ -1,0 +1,24 @@
+name: null
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy=1.23.3
+  - git-lfs=3.2.0
+  - matplotlib=3.6.0
+  - jedi=0.17.2
+  - bs4=4.11.1
+  - jupyterlab=3.3.2
+  - pandas=1.5.0
+  - pip=22.2.2
+  - scipy=1.9.1
+  - joblib=1.2.0
+  - gh
+  - python=3.9.12
+  - jupyter
+  - pip:
+    - detoxify==0.5.0
+    - mudes==0.3.0
+    - git+https://github.com/LIAAD/yake
+    - somajo==2.2.2
+    - someweta==1.8.0
