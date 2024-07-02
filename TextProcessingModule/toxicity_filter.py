@@ -60,10 +60,10 @@ class ToxicityFilter:
         self.word_list_filter.set_keep_results(True)
         self.detoxify_filter.set_keep_results(True)
 
-    def get_results(self, as_pandas: bool = False):
-        if not as_pandas:
+    def get_results(self, as_dataframe: bool = False):
+        if not as_dataframe:
             return self.__results
-        if as_pandas:
+        if as_dataframe:
             # todo: check dataframe creation. bassd des?
             return pd.DataFrame.from_dict(self.__results)
 
