@@ -56,7 +56,7 @@ to create it in condas standard location for environments.
 
 Now you can import it like any python module inside your working directory.
 
-To try out TextProcessingModule you can download our **Jupyter Notebook demo** `DEMO_TextProcessingModule.ipynb` to your working directory.
+To try out TextProcessingModule you can download our **Jupyter Notebook demos** `DEMO_*.ipynb` to your working directory.
 This requires **jupyter-notebook or jupyter-lab** to be installed (e.g. via `pip install jupyterlab`) or an IDE that supports jupyter-notebooks.
 You might also want to run `pip install ipywidgets` to circumvent any error messages regarding `tqdm`. 
 
@@ -65,7 +65,11 @@ You might also want to run `pip install ipywidgets` to circumvent any error mess
 
 
 ## Usage:
-TextProcessingModule provides **toxicity filtering**, **toxic span detection** and **keyword extraction**.
+TextProcessingModule provides 
+- **toxicity filtering**,
+- **toxic span detection** and
+- **keyword extraction**.
+
 See the `DEMO_ToxicityFilter.ipynb`, `DEMO_ToxicSpanDetection.ipynb` and `DEMO_KeywordExtraction.ipynb` for **comprehensive usage examples**.
 > They can be viewed within GitHub. However, if you want to use and execute them locally, [Jupyter](https://jupyter.org/install) must be installed or your IDE must support jupyter notebooks.
 ---
@@ -79,12 +83,18 @@ See the `DEMO_ToxicityFilter.ipynb`, `DEMO_ToxicSpanDetection.ipynb` and `DEMO_K
 
 Detoxify rates a prompt in five different categories and assigns a probability to them. ToxicityFilter takes the highest probability and compares it to the threshold. If the threshold is exceeded, a **WARNING string** is returned.
 
+Results for consecutive uses of the filter can be stored by passing `keep_results=True` to its `apply` method or by using `toxicityfilter.set_keep_results(True)` as a setter. Otherwise only the results of the last call to `apply` is saved.
+
+The Results can be accesed via `toxicityfilter.get_results(as_dataframe=True)` (default: `as_dataframe=False` which reuturns a dictionary)
+![toxicity_scores_demo](toxicity_scores.png)
 
 > [!NOTE]
 > The texts are tokenized but not lemmatized prior applying the word list filter. This will be a future improvement.
 
 > [!NOTE]
-> The two filter stages can also be used **separately**. See `DEMO_ToxicityFilter.ipynb`.
+> - You can provide your custom wordlist for the first filter stage.
+> - The two filter stages can also be used **separately**.
+> - See [`DEMO_ToxicityFilter.ipynb`](DEMO_ToxicityFilter.ipynb).
 
 > [!NOTE]
 > ToxicityFilter can be initialized with **three different models**: 'original' (default), 'unbiased', 'multilingual'.
