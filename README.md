@@ -1,7 +1,7 @@
 # TextProcessingModule
 **Background**: This module was developed during an internship at **Deutsche Museum Nürnberg (Zukunftsmuseum)** 
 as a protective prompt filtering mechanism for a possible interactive installation featuring 
-an image generation pipeline from speech to image. It was designed to **process english language** (see [Multilingualism](##multilingualism).
+an image generation pipeline from speech to image. It was designed to **process english language** (see [Multilingualism](#multilingualism).
 
 The **TextProcessingModule** has two **submodules**:
 1. **ToxicityFilter**: Provides the ToxicityFilter, a two-tiered approach to **filter texts containing toxic language**, and a SpanDetector which can return the span or characters of toxic parts in a text.
@@ -20,7 +20,7 @@ The **TextProcessingModule** has two **submodules**:
 
 ---
 Table of content
-- [Installation](##installation)
+- [Installation](#installation)
 
 ---
 ## Installation
