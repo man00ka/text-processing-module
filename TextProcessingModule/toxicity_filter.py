@@ -40,9 +40,6 @@ class ToxicityFilter:
                  word_list: str = 'default',
                  keep_results: bool = False,
                  **kwargs):
-        self.__FILTER_TRIGGERED = False  #
-        self.__results = {'word_list_filter': {},
-                          'detoxify_filter': {}}
         self.__keep_results = keep_results
         self.word_list_filter = WordListFilter(word_list=word_list, keep_results=keep_results)
         self.detoxify_filter = DetoxifyFilter(model=model, keep_results=keep_results, **kwargs)
@@ -61,11 +58,15 @@ class ToxicityFilter:
         self.detoxify_filter.set_keep_results(True)
 
     def get_results(self, as_dataframe: bool = False):
+        """Returns results from both filter stages combined.
+        """
+
+        results = {'word_list_filter': self.word_list_filter.get_results(),
+                   'detoxify_filter': self.detoxify_filter.get_scores()}
         if not as_dataframe:
-            return self.__results
+            return results
         if as_dataframe:
-            # todo: check dataframe creation. bassd des?
-            return pd.DataFrame.from_dict(self.__results)
+            return pd.DataFrame.from_dict(results)
 
     def apply(self, text: str, threshold=0.5, verbose=False) -> int | str:
         """
@@ -102,27 +103,14 @@ class ToxicityFilter:
         #  Lemmatization and separate filtering: Use lemmatized text for filtering
         #  by stop word lists and the original text for filtering with detoxify.
 
-        if not self.__keep_results:
-            # Reset results
-            self.__results = {'word_list_filter': {},
-                              'detoxify_filter': {}}
-
         # applying word list filter
         result = self.word_list_filter.apply(text, verbose=verbose)
-        self.__add_to_results(result)
         if result is not None:
             return result
         else:
             # applying detoxify
             result = self.detoxify_filter.apply(text, threshold, verbose=verbose)
-            self.__results["detoxify_filter"][text] = result
             return result
-
-    def __add_to_results(self, result):
-        # e.g. if the dict has two entries the idx will be 2 for the third entry,
-        # so we follow 0-based indexing.
-        idx = len(self.__results['word_list_filter'])
-        self.__results['word_list_filter'][idx] = result
 
 
 class SpanDetector:
