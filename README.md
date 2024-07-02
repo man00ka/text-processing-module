@@ -81,24 +81,34 @@ See the `DEMO_ToxicityFilter.ipynb`, `DEMO_ToxicSpanDetection.ipynb` and `DEMO_K
 1. Strictly **filtering** prompts **by basic lists** of vulgar or swear words, immediately neglecting the input text.
 2. **Detecting** more subtle forms of problematic textual information like **threats, obscenity, insults, and identity-based hate** using [detoxify](https://github.com/unitaryai/detoxify) if the first filter stage was passed. A **threshold** (range [0; 1]) can be used to sharpen the filter.
 
-Detoxify rates a prompt in five different categories and assigns a probability to them. ToxicityFilter takes the highest probability and compares it to the threshold. If the threshold is exceeded, a **WARNING string** is returned.
 
-Results for consecutive uses of the filter can be stored by passing `keep_results=True` to its `apply` method or by using `toxicityfilter.set_keep_results(True)` as a setter. Otherwise only the results of the last call to `apply` is saved.
+Detoxify rates a prompt in five different categories and assigns an overall toxicity value. ToxicityFilter takes the toxicity value and compares it to the threshold. If the **threshold is exceeded**, a `1` is returned otherwise `None`.
+
+[SCREENSHOT]
+
+
+ToxicityFilter also stores **verbose results** of the last apply call. Use `toxicity_filter.get_results()` to get them. You can pass `as_dataframe=True` to get a more beautified output:
+
+[SCREENSHOT]
+
+
+By default, verbose results are only stored for the last apply call. Results for consecutive uses of the filter can be stored by passing `keep_results=True` to its `apply` method or by using `toxicityfilter.set_keep_results(True)` as a setter.
+
+[SCREENSHOT]
 
 The Results can be accesed via `toxicityfilter.get_results(as_dataframe=True)` (default: `as_dataframe=False` which reuturns a dictionary)
-![toxicity_scores_demo](toxicity_scores.png)
+
+![toxicity-filter-example](screen_shots/toxicity_filter_example.png)
 
 > [!NOTE]
-> The texts are tokenized but not lemmatized prior applying the word list filter. This will be a future improvement.
-
-> [!NOTE]
+> Please also check out the **comparison of the filter stages** as shown in the [DEMO_ToxicityFilter.ipynb](DEMO_ToxicityFilter.ipynb) notebook
+> to get an inpression about behaviour and limitations.
+>
+> #### Additional Notes
+> - The texts are tokenized but not lemmatized prior applying the word list filter. This will be a future improvemen
 > - You can provide your custom wordlist for the first filter stage.
-> - The two filter stages can also be used **separately**.
-> - See [`DEMO_ToxicityFilter.ipynb`](DEMO_ToxicityFilter.ipynb).
-
-> [!NOTE]
-> ToxicityFilter can be initialized with **three different models**: 'original' (default), 'unbiased', 'multilingual'.
-> The model names are passed down to [detoxify](https://github.com/unitaryai/detoxify); see their documentation for **model explanation**. 
+> - The two filter stages can also be used **separately** (see [DEMO_ToxicityFilter.ipynb](DEMO_ToxicityFilter.ipynb))
+> - ToxicityFilter can be initialized with **three different models**: 'original' (default), 'unbiased', 'multilingual'. The model names are passed down to [detoxify](https://github.com/unitaryai/detoxify); see their documentation for **model explanation**. 
 
 
 ### Span Detection
@@ -109,14 +119,17 @@ It also provides **additional functionality** for returning the input text:
 - **Tag the input** with a custom tag.
 - **HTML highlighting** of toxic spans.
 
-> [!NOTE]
-> See `DEMO_ToxicSpanDetection.ipynb` for usage examples.
+> See [`DEMO_ToxicSpanDetection.ipynb`](DEMO_ToxicSpanDetection.ipynb) for usage examples.
+
 
 ### Keyword Extraction
 `TextProcessingModule.keyword_extraction` provides the `KWExtractor` class.
 It uses [yake](https://github.com/LIAAD/yake) for extraction and provides additional **custom tagging** and **HTML highlighting** as well.
 
 It was thought to help the speech to text pipeline reduce spoken input to meaningful words for the image generation prompt.
+
+> See [`DEMO_KeywordExtraction.ipynb`](DEMO_KeywordExtraction.ipynb) for usage examples.
+
 
 ---
 ## Multilingualism
@@ -135,7 +148,8 @@ While the first apply call to the filter takes two to three seconds longer due t
 accelerated quite a bit.
 
 For the example shown in section [Toxicity Filter](#toxicity-filter) it increases speed to roughly 290%.
-![toxicity-filter-example](toxicity_filter_eample.png)
+
+![gpu-acceleration-comparison](screen_shots/gpu-acceleration-comparison.png)
 
 ---
 ## Attributions
