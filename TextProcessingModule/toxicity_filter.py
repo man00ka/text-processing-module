@@ -12,13 +12,17 @@ from yake.highlight import TextHighlighter
 
 
 class ToxicityFilter:
-    # todo: copy dockstring from below
-    # TODO:
-    #  - Use a language parameter in __init__() to pass 'de' or 'en'.
-    #  - Choose 'en_PTB' or 'de_CMC' as the tokenizer language
-    #  - and
-    # TODO: Test if `device='mps'` works
-    """Description:
+    """ToxicityFilter uses a two-tiered filter approach: (1) Strictly filtering
+    prompts by basic lists of vulgar or swear words, immediately neglecting the
+    input text upon match and (2) detecting more subtle forms of problematic textual
+    information like threats, obscenity, insults, and identity-based hate using detoxify
+    if the first filter stage was passed. A threshold (range [0; 1]; defautl: 0.5) can
+    be used to sharpen the filter.
+
+    ToxicityFilter will first run the text against a default (or custom) wordlist and
+    return 1 if there is a match, bypassing the more advanced but slower second filter,
+    thus making detection faster for obvious bad language. Only if there is no match
+    with the wordlist, the text is passed through the second filter (detoxify).
 
     PARAMETERS:
     -----------
